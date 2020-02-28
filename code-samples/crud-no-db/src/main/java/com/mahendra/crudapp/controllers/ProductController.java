@@ -20,12 +20,12 @@ import com.mahendra.crudapp.models.ProductList;
 import com.mahendra.crudapp.services.ProductService;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping(value="/products",produces= {"application/json","application/xml"})
 public class ProductController {
 
 	@Autowired private ProductService service;
 	
-	@GetMapping(produces= {"application/json","application/xml"})
+	@GetMapping
 	public ResponseEntity<ProductList> getAll(){
 		List<Product> products = service.getAll();
 		ProductList plist = new ProductList();
@@ -33,7 +33,7 @@ public class ProductController {
 		return  new ResponseEntity<>(plist,HttpStatus.OK);
 	}
 	
-	@GetMapping(value="/find",produces="application/json")
+	@GetMapping(value="/find")
 	public ResponseEntity<Product> findBy(@RequestParam("id") Integer id) {
 		Product product  = service.findById(id);
 		if(product==null) {
@@ -42,17 +42,22 @@ public class ProductController {
 		return new ResponseEntity<>(product,HttpStatus.OK);
 	}
 	
-	@PostMapping(consumes="application/json", produces="application/json")
-	public Product create(@RequestBody Product product) {
-		return service.create(product);
+	@PostMapping(consumes="application/json")
+	public ResponseEntity<Object> create(@RequestBody Product product) {
+		try {
+			return new ResponseEntity<>(service.create(product),HttpStatus.OK);	
+		}catch(RuntimeException ex) {
+			return new ResponseEntity<>(ex.getMessage(),HttpStatus.CONFLICT);
+		}
+		
 	}
 	
-	@PutMapping(value="/{id}", consumes="application/json", produces="application/json")
+	@PutMapping(value="/{id}", consumes="application/json")
 	public Product update(@PathVariable("id")Integer id, @RequestBody Product product) {
 		return service.update(product);
 	}
 	
-	@DeleteMapping(value="/{id}",produces="application/json")
+	@DeleteMapping(value="/{id}")
 	public ResponseEntity<String> delete(@PathVariable("id")Integer id) {
 		try{
 			 service.deleteById(id);
