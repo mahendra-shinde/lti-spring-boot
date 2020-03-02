@@ -21,6 +21,7 @@
 3.  Open the only Java file in project `DiscoveryServerApplication.java` and one Class-level
     annotation `@EnableEurekaServer`
 
-
 4.  Save all files and run as Spring boot application.
+
+5.  Access Eureka Server Dashboard using 'http://localhost:8761'
 
